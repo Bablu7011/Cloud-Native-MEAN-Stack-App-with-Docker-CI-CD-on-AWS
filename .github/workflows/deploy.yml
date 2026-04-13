@@ -81,7 +81,10 @@ jobs:
               echo "✅ No changes in image → Skipping restart"
             fi
 
-            echo "🧹 Cleaning unused images..."
-            sudo docker image prune -f
+            echo "🧹 Removing old unused images..."
+            # Remove all unused images (safe)
+            sudo docker image prune -a -f
+
+            echo "✅ Cleanup complete"
 
             echo "✅ Deployment Done!"
