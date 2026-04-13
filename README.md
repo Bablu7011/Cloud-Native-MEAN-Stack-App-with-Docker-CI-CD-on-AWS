@@ -1,88 +1,115 @@
-# 🚀 DISCOVER DOLLAR ASSIGNMENT – MEAN STACK
-### Docker, GitHub Actions, AWS EC2
+# 🚀 Cloud-Native MEAN Stack Application Deployment
+### Docker • GitHub Actions • AWS EC2
 
-This project is a complete **MEAN stack application**. The whole system is fully containerized using Docker, and the deployment is automated using GitHub Actions. The application is hosted on an **AWS EC2 Ubuntu instance**.
+This project demonstrates a **production-ready MEAN stack application** fully containerized using Docker and deployed on AWS EC2 with an automated CI/CD pipeline using GitHub Actions.
 
-The frontend is served through Nginx inside the frontend Dockerfile.
+The frontend is served via **Nginx inside a Docker container**, and all services are orchestrated using Docker Compose.
 
 ---
 
-## 1. Project Summary
+## 🔗 Repository
+
+👉 https://github.com/Bablu7011/Cloud-Native-MEAN-Stack-App-with-Docker-CI-CD-on-AWS
+
+---
+
+## 📌 Project Overview
 
 This application allows users to:
-* Add a tutorial
-* View tutorials
-* Update a tutorial
-* Delete a tutorial
 
-**Technologies used:**
-* Angular
-* Node.js and Express
-* MongoDB
-* Nginx
-* Docker & Docker Compose
-* GitHub Actions
-* AWS EC2
+- ➕ Add tutorials  
+- 📖 View tutorials  
+- ✏️ Update tutorials  
+- ❌ Delete tutorials  
 
 ---
 
-## 2. Changes and Improvements Made
+## 🛠️ Tech Stack
 
-### A. Frontend Changes
+- **Frontend:** Angular  
+- **Backend:** Node.js, Express  
+- **Database:** MongoDB  
+- **Web Server:** Nginx  
+- **Containerization:** Docker, Docker Compose  
+- **CI/CD:** GitHub Actions  
+- **Cloud:** AWS EC2 (Ubuntu)
 
-**1. Added Nginx configuration**
-* **File added:** `frontend/nginx/default.conf`
-* **Purpose:**
-    * Handles Angular routing.
-    * Acts as a reverse proxy for the backend API.
-    * Provides cache control for fresh builds.
+---
 
-**2. Updated API URL inside Angular service**
-* **File:** `frontend/src/app/services/tutorial.service.ts`
-* **Change:**
-    * *From:* `const baseUrl = 'http://localhost:8080/api/tutorials';`
-    * *To:* `const baseUrl = '/api/tutorials';`
-* **Reason:** This makes the API calls work through Nginx inside the frontend container.
+## ⚙️ Key Features
 
-**3. Frontend Dockerfile added**
-* A complete Dockerfile was created to build the Angular app and serve it using Nginx.
+✅ Full Dockerized MEAN Stack Application  
+✅ Nginx Reverse Proxy for API routing  
+✅ CI/CD Pipeline with GitHub Actions  
+✅ Automated Deployment to AWS EC2  
+✅ Zero manual deployment process  
+✅ Clean Angular routing support  
+✅ Scalable microservices-based architecture  
 
-### B. Backend Changes
+---
 
-**1. Backend Dockerfile added**
-* Used to containerize the Node.js server.
+## 🔧 Changes & Improvements
 
-**2. MongoDB connection updated**
-* **File:** `backend/app/config/db.config.js`
-* **Change:**
-    * *From:* `url: "mongodb://localhost:27017/dd_db"`
-    * *To:* `url: "mongodb://mongo:27017/tutorial_db"`
-* **Reason:** This makes the backend connect to MongoDB inside Docker.
+### 🔹 Frontend Enhancements
 
-### C. Root Folder Additions
+**1. Nginx Configuration Added**
+- File: `frontend/nginx/default.conf`
+- Handles Angular routing
+- Reverse proxies API requests to backend
+- Enables cache control
 
-**1. `docker-compose.yml` created**
-It contains three services:
+**2. Updated API Base URL**
+```ts
+const baseUrl = '/api/tutorials';
+````
+
+✔ Enables communication via Nginx inside container
+
+**3. Frontend Dockerfile**
+
+* Builds Angular app
+* Serves via Nginx container
+
+---
+
+### 🔹 Backend Enhancements
+
+**1. Backend Dockerfile**
+
+* Containerized Node.js application
+
+**2. MongoDB Connection Update**
+
+```js
+url: "mongodb://mongo:27017/tutorial_db"
+```
+
+✔ Enables container-to-container communication
+
+---
+
+### 🔹 Root Configuration
+
+**Docker Compose Setup**
+
+* `frontend`
 * `backend`
-* `frontend` (with Nginx inside its own image)
 * `mongo`
 
-**2. GitHub Actions workflow added**
-* **File:** `.github/workflows/deploy.yml`
-* **Workflow steps:**
-    1.  Builds backend and pushes to Docker Hub.
-    2.  Builds frontend with `--no-cache` and pushes to Docker Hub.
-    3.  Connects to EC2.
-    4.  Pulls the latest GitHub code.
-    5.  Pulls updated Docker images.
-    6.  Runs `docker-compose`.
-    7.  Deploys automatically.
+**GitHub Actions CI/CD Pipeline**
+
+* Builds Docker images
+* Pushes to Docker Hub
+* SSH into EC2
+* Pulls latest code
+* Runs docker-compose
+* Deploys automatically
 
 ---
 
-## 3. EC2 Setup Instructions
+## ☁️ AWS EC2 Setup
 
-SSH to your EC2 instance and run the following commands:
+Run on Ubuntu instance:
 
 ```bash
 sudo apt update
@@ -91,56 +118,73 @@ sudo apt install docker-compose -y
 sudo usermod -aG docker $USER && newgrp docker
 sudo systemctl enable docker
 sudo systemctl start docker
-The server is now ready to deploy the application.
-
-```
-4. GitHub Secrets Required
-Add the following secrets in: GitHub → Repo → Settings → Secrets → Actions
-```
-Secret	         Description
-DOCKER_USERNAME	Your Docker Hub username
-DOCKER_PASSWORD	Your Docker Hub password or token
-EC2_HOST        	Your EC2 public IP address
-EC2_USER	         ubuntu
-EC2_SSH_KEY	      Contents of your .pem key
 ```
 
-I didn’t use an Elastic IP for the EC2 instance, so the public IP changes on every restart. Because of this, the EC2_HOST secret must be updated each time with the new public IP. I used a t2.micro instance to avoid additional costs, so performance may be slow. If needed, you can upgrade the instance type for better performance or attach an Elastic IP to avoid IP changes.
+---
 
+## 🔐 GitHub Secrets
 
-5. Running This Project From Scratch
-If someone new wants to run this project, these are the steps:
+Add in:
+**Repo → Settings → Secrets → Actions**
 
-Step 1 — Launch an EC2 Ubuntu instance Install Docker and Docker Compose using the commands mentioned in Section 3.
+| Secret Name     | Description               |
+| --------------- | ------------------------- |
+| DOCKER_USERNAME | Docker Hub username       |
+| DOCKER_PASSWORD | Docker Hub password/token |
+| EC2_HOST        | EC2 Public IP             |
+| EC2_USER        | ubuntu                    |
+| EC2_SSH_KEY     | `.pem` key content        |
 
-Step 2 — Fork or clone this repository locally
+---
 
+## ⚠️ Note on EC2 IP
 
-git clone [https://github.com/YOUR_USERNAME/DISCOVER-DOLLAR-ASSIGNMENT.git](https://github.com/YOUR_USERNAME/DISCOVER-DOLLAR-ASSIGNMENT.git)
+* Using **t2.micro instance**
+* No Elastic IP used
+  ➡️ Public IP changes on restart
+  ➡️ Update `EC2_HOST` secret each time
 
-Step 3 — Create a GitHub repository and push the project Make sure to update your DockerHub username in docker-compose.yml.
+💡 Recommended: Attach Elastic IP for stability
 
-Step 4 — Set all required GitHub Secrets Add: DOCKER_USERNAME, DOCKER_PASSWORD, EC2_HOST, EC2_USER, EC2_SSH_KEY.
+---
 
-Step 5 — Commit and push your changes to the main branch As soon as you push, GitHub Actions will automatically:
+## 🚀 How to Run (From Scratch)
 
-Build frontend and backend Docker images
+### Step 1: Launch EC2
 
-Push them to DockerHub
+* Install Docker & Docker Compose
 
-SSH into EC2
+### Step 2: Clone Repo
 
-Pull the latest code
-
-Run docker-compose
-
-Deploy the application
-
-Everything happens automatically without manual steps.
-
-6. Folder Structure
+```bash
+git clone https://github.com/YOUR_USERNAME/YOUR_REPOSITORY_NAME.git
 ```
-DISCOVER-DOLLAR-ASSIGNMENT/
+
+### Step 3: Update DockerHub Username
+
+* Edit `docker-compose.yml`
+
+### Step 4: Add GitHub Secrets
+
+### Step 5: Push Code
+
+```bash
+git push origin main
+```
+
+🎯 GitHub Actions will automatically:
+
+* Build images
+* Push to DockerHub
+* SSH into EC2
+* Deploy application
+
+---
+
+## 📂 Folder Structure
+
+```
+project-root/
 │
 ├── backend/
 │   ├── app/
@@ -152,28 +196,54 @@ DISCOVER-DOLLAR-ASSIGNMENT/
 │   ├── Dockerfile
 │
 ├── docker-compose.yml
-│
 └── .github/workflows/deploy.yml
 ```
-7. How to Test After Deployment
 
+---
+
+## 🧪 Testing the Application
+
+### API Test
+
+```bash
 curl http://YOUR_EC2_PUBLIC_IP/api/tutorials
-Check frontend: Open in browser:
+```
 
-Plaintext
+### Frontend
 
+```
 http://YOUR_EC2_PUBLIC_IP
-8. Final Notes
-This project demonstrates:
+```
 
-✅ Complete Dockerization of a MEAN application
+---
 
-✅ Backend API reverse-proxying through Nginx
+## 🎯 What This Project Demonstrates
 
-✅ Fully automated CI/CD pipeline using GitHub Actions
+* 🐳 End-to-end Dockerization
+* 🔁 CI/CD automation with GitHub Actions
+* ☁️ AWS EC2 deployment
+* 🔐 Secure container communication
+* ⚡ Production-ready architecture
+* 🚀 Zero manual deployment workflow
 
-✅ Zero manual deployment
+---
 
-✅ Auto Git pull and auto Docker image pull on EC2
+## 👨‍💻 Author
+**Bablu Kumar**
+```
+🔗 [https://github.com/Bablu7011](https://github.com/Bablu7011)
+🔗 [https://www.linkedin.com/in/bablukumar70](https://www.linkedin.com/in/bablukumar70)
+```
+---
 
-✅ Clean routing for Angular applications
+## ⭐ Final Note
+
+This project showcases real-world DevOps practices including:
+
+* Infrastructure automation
+* Continuous delivery
+* Container orchestration
+* Cloud deployment
+
+
+
