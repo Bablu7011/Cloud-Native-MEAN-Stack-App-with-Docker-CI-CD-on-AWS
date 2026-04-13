@@ -12,7 +12,7 @@ services:
       - mongo_data:/data/db
 
   backend:
-    image: babludevops701/mean-backend:latest
+    image: babludevops701/mean-backend:${TAG}
     container_name: backend
     restart: always
     ports:
@@ -21,7 +21,7 @@ services:
       - mongo
 
   frontend:
-    image: babludevops701/mean-frontend:latest
+    image:  babludevops701/mean-frontend:${TAG}
     container_name: frontend
     restart: always
     ports:
