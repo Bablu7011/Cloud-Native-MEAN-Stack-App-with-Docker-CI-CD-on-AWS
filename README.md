@@ -157,7 +157,7 @@ Add in:
 ### Step 2: Clone Repo
 
 ```bash
-git clone https://github.com/YOUR_USERNAME/YOUR_REPOSITORY_NAME.git
+[git clone https://github.com/Bablu7011/Cloud-Native-MEAN-Stack-App-with-Docker-CI-CD-on-AWS]
 ```
 
 ### Step 3: Update DockerHub Username
