@@ -75,7 +75,7 @@ jobs:
               echo "🔄 Changes detected → Restarting containers..."
 
               TAG=$TAG sudo docker-compose down
-              TAG=$TAG sudo docker-compose up -d
+              sudo TAG=$TAG docker-compose up -d --force-recreate
 
             else
               echo "✅ No changes in image → Skipping restart"
