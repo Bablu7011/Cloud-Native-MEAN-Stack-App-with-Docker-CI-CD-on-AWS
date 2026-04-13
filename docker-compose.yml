@@ -21,7 +21,7 @@ services:
       - mongo
 
   frontend:
-    image:  babludevops701/mean-frontend:${TAG-latest}
+    image: babludevops701/mean-frontend:${TAG:-latest}
     container_name: frontend
     restart: always
     ports:

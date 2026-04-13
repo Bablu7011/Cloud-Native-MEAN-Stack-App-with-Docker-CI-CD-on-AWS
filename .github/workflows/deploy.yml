@@ -13,7 +13,7 @@ jobs:
       - name: Checkout Code
         uses: actions/checkout@v3
 
-      # 🔐 Login to Docker Hub
+      # 🔐 Login Docker Hub
       - name: Login to Docker Hub
         uses: docker/login-action@v2
         with:
@@ -24,76 +24,64 @@ jobs:
       - name: Build Backend Image
         run: |
           docker build -t babludevops701/mean-backend:${{ github.sha }} ./backend
-          docker tag babludevops701/mean-backend:${{ github.sha }} babludevops701/mean-backend:latest
           docker push babludevops701/mean-backend:${{ github.sha }}
-          docker push babludevops701/mean-backend:latest
 
       # 🐳 Build & Push Frontend
       - name: Build Frontend Image
         run: |
           docker build --no-cache -t babludevops701/mean-frontend:${{ github.sha }} ./frontend
-          docker tag babludevops701/mean-frontend:${{ github.sha }} babludevops701/mean-frontend:latest
           docker push babludevops701/mean-frontend:${{ github.sha }}
-          docker push babludevops701/mean-frontend:latest
 
-      # 🚀 Deploy to EC2
+      # 🚀 Deploy
       - name: Deploy to EC2
         uses: appleboy/ssh-action@v1.0.3
         with:
           host: ${{ secrets.EC2_HOST }}
           username: ${{ secrets.EC2_USER }}
           key: ${{ secrets.EC2_SSH_KEY }}
-          envs: TAG
           script: |
 
             export TAG=${{ github.sha }}
 
-            echo "📦 Updating system..."
-            sudo apt update -y
-
-            # ✅ Install Docker (only first time)
-            if ! command -v docker &> /dev/null
-            then
-              echo "🐳 Installing Docker..."
-              sudo apt install -y docker.io
-              sudo systemctl start docker
-              sudo systemctl enable docker
-            else
-              echo "✅ Docker already installed"
-            fi
-
-            # ✅ Install Docker Compose (only first time)
-            if ! command -v docker-compose &> /dev/null
-            then
-              echo "🐳 Installing Docker Compose..."
-              sudo apt install -y docker-compose
-            else
-              echo "✅ Docker Compose already installed"
-            fi
-
             cd /home/ubuntu
 
-            # 📥 Clone repo if not exists
             if [ ! -d "Cloud-Native-MEAN-Stack-App-with-Docker-CI-CD-on-AWS" ]; then
               git clone https://github.com/Bablu7011/Cloud-Native-MEAN-Stack-App-with-Docker-CI-CD-on-AWS
             fi
 
             cd Cloud-Native-MEAN-Stack-App-with-Docker-CI-CD-on-AWS
-
-            # 🔄 Pull latest code
             git pull origin main
 
-            echo "📥 Pulling latest images with TAG..."
+            echo "📥 Pulling new images..."
             sudo docker pull babludevops701/mean-backend:$TAG
             sudo docker pull babludevops701/mean-frontend:$TAG
 
-            echo "🛑 Stopping old containers..."
-            sudo docker-compose down --remove-orphans
+            # 🔍 Get current running image IDs
+            OLD_BACKEND=$(sudo docker inspect --format='{{.Image}}' backend 2>/dev/null || echo "")
+            OLD_FRONTEND=$(sudo docker inspect --format='{{.Image}}' frontend 2>/dev/null || echo "")
 
-            echo "🚀 Starting new containers with fresh images..."
-            TAG=$TAG sudo docker-compose up -d --force-recreate
+            # 🔍 Get new image IDs
+            NEW_BACKEND=$(sudo docker images -q babludevops701/mean-backend:$TAG)
+            NEW_FRONTEND=$(sudo docker images -q babludevops701/mean-frontend:$TAG)
+
+            echo "Old Backend: $OLD_BACKEND"
+            echo "New Backend: $NEW_BACKEND"
+
+            echo "Old Frontend: $OLD_FRONTEND"
+            echo "New Frontend: $NEW_FRONTEND"
+
+            # 🚀 Restart only if image changed
+            if [ "$OLD_BACKEND" != "$NEW_BACKEND" ] || [ "$OLD_FRONTEND" != "$NEW_FRONTEND" ]; then
+              echo "🔄 Changes detected → Restarting containers..."
+
+              TAG=$TAG sudo docker-compose down
+              TAG=$TAG sudo docker-compose up -d
+
+            else
+              echo "✅ No changes in image → Skipping restart"
+            fi
 
             echo "🧹 Cleaning unused images..."
             sudo docker image prune -f
 
-            echo "✅ Deployment Successful!"
+            echo "✅ Deployment Done!"
